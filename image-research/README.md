@@ -1,70 +1,63 @@
-# Getting Started with Create React App
+# 画像検索アプリ
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Reactを用いる
 
-## Available Scripts
+### 画像検索アプリの流れ
 
-In the project directory, you can run:
+ユーザーが検索キーワードを入力する。
 
-### `npm start`
+「検索」ボタンが押される。
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+入力されたキーワードを使ってAPIリクエストを送る。
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+APIから画像のURLを含むデータを受け取る。
 
-### `npm test`
+取得した画像のURLを使って、画面に画像を表示する。
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 学習メモ
 
-### `npm run build`
+#### イベントオブジェクトとは？
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+イベントオブジェクトは、ボタンのクリックやキーボード入力など、ブラウザ上で何かが起きたときに、そのイベントに関する情報をまとめて提供してくれる特別なオブジェクトです。
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+例えば、あなたが「検索」ボタンをクリックしたとしましょう。そのクリックという「イベント」には、様々な情報が含まれています。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+・どこがクリックされたか？ (e.target)
 
-### `npm run eject`
+・どのキーが押されたか？ (e.key)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+・マウスのX座標は？ (e.clientX)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+これらの情報を取得するために、Reactはイベントハンドラ関数（onClickやonChangeに指定した関数 ex. onclick={イベントハンドラ関数}）の引数として、このイベントオブジェクトを自動的に渡してくれます。慣習的にeやeventと名付けられます。
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+e,eventを引数として利用する場合はテキスト自身と結びついてる関数でのみ使えるbuttonを押したらテキストの内容を取るわけじゃなくてボタンがどう押されたかだけしか取れない
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+だからonclickと結びつくイベントハンドラ関数の引数としてeを選択しても入力欄の内容は得られない
 
-## Learn More
+#### エラーメッセージの一括管理
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```javaScript
+const [error, setError] = useState({ message: null, type: null });
+```
+messageは表示するテキスト、typeはエラーの種類（例: 'warning', 'api_error'）を区別するために使います。
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+また、この文章をreturn文で表示させる時にnullがfalseと同じ役割であるから三項演算子(?,:)が使える
 
-### Code Splitting
+```javaScript
+{error.message ? (
+    <p>{error.message}</p>
+    ) : (
+)}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### .trim()とは
 
-### Analyzing the Bundle Size
+.trim()は、JavaScriptの文字列が持つメソッドです。文字列の両端にある空白（スペース、タブ、改行など）を取り除くことができる
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+これによりユーザーが入力した余計に入力した空白等があっても純粋な文字列として取り出せる
 
-### Making a Progressive Web App
+たとえば、ユーザーが入力フォームに「　　買い物　　」のように余計なスペースを入れてしまった場合、.trim()を使うと「買い物」という純粋な文字列だけを取得できます。
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+元の文字列: "　　買い物　　"
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+.trim()実行後: "買い物"
