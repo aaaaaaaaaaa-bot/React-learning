@@ -41,6 +41,7 @@ function App(){
         type: "communication_error"
       });
       })
+    }
   }
 
   return(
@@ -57,9 +58,11 @@ function App(){
         <p>画像データを読み込み中</p>
       ) : error.message ? (
         <p>{error.message}</p>
-      ) : (
-
-      )}
+      ) : image ? (
+        <ul>
+          
+        </ul>
+      ):null}
     </div>
   );
 }
