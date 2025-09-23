@@ -1,68 +1,83 @@
-import React, {useState, useEffect} from 'react';
-import 
+import React, { useState} from 'react';
 
-function App(){
-  const [query,setQuery] = useState('');//検索欄
-  const [image,setImage] = useState([]);//画像データを入れる
+export default function App() {
+  const [query, setQuery] = useState('');//検索欄の内容保持
+  const [image, setImage] = useState([]);//画像データを入れる
   const [error, setError] = useState({ message: null, type: null });//エラーメッセージとエラー内容の一括管理に用いる
   const [loading, setLoading] = useState(false);//画像検索中の表記に用いる
 
-  const handleSearch = () => {
-    if (query.trim() === ''){ //queryが空なら何もしない
+  const handleWord = (e) => {//検索欄に文字が入力されるたびその内容を保持する
+    setQuery(e.target.value)
+  }
+
+  const handleSearch = () => { //ボタンが押された時の処理
+    if (query.trim() === '') { //queryが空なら何もしない
       setError({
         message: "キーワードが入力されていません",
         type: "empty_error"
       })
       console.log("エラータイプ:", "empty_error");//デバック用
-    }else{
+    } else {
 
       setLoading(true);//画像の検索に入る
 
-    const API_KEY = process.env.REACT_APP_API_KEY;
-    const url = `https:pixabay.com/api/?key=${API_KEY}&q=${query}`;
+      const API_KEY = process.env.REACT_APP_API_KEY;
+      const url = `https://pixabay.com/api/?key=${API_KEY}&q=${query}`;
 
-    fetch(url)
-      .then(response => {
-        if (!response.ok) {
-          // エラーを投げることで、下の.catch()ブロックに処理が移る
-          throw new Error("画像の取得に失敗しました");
-        }
-        return response.json();
-      })
-      .then(data => {
-        setImage(data.hits);
-        setLoading(false);
-      })
-      .catch(error => { // throwされたエラーをキャッチ
-      console.error("エラー:", error);
-      setLoading(false);
-      setError({
-        message: "通信エラーが発生しました",
-        type: "communication_error"
-      });
-      })
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            // エラーを投げることで、下の.catch()ブロックに処理が移る
+            throw new Error("画像の取得に失敗しました");
+          }
+          return response.json();
+        })
+        .then(data => {
+          setImage(data.hits);//画像データを配列に入れる
+          setLoading(false);
+        })
+        .catch(error => { // throwされたエラーをキャッチ
+          console.error("エラー", error);
+          setLoading(false);
+          setError({
+            message: "通信エラーが発生しました",
+            type: "communication_error"
+          });
+        })
     }
   }
 
-  return(
+  return (
     <div>
       <h1>画像検索</h1>
-      <input 
-        type = "text"
-        value = {query}
+      <input
+        type="text"
+        value={query}
         placeholder="キーワードを入力"
+        onChange={handleWord}
       />
-      <button onClick = {handleSearch}>検索</button>
+      <button onClick={handleSearch}>検索</button>
 
       {loading ? (
         <p>画像データを読み込み中</p>
       ) : error.message ? (
         <p>{error.message}</p>
-      ) : image ? (
+      ) : image.length > 0 ? (
+        <>
+        <h2>{query}</h2> {/*検索欄の入力を表示*/}
         <ul>
-          
+          {image.map((hits) => (
+            <li key={hits.id}>
+              {/*<p>検索結果{image.totalHits}件</p> あとで追加できるようにする*/}
+              <img
+                src={hits.webformatURL}
+                alt={hits.tags}
+              />
+            </li>
+          ))}
         </ul>
-      ):null}
+        </>
+      ) : null}
     </div>
   );
 }
