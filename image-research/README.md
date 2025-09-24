@@ -233,3 +233,108 @@ imgタグの属性
 5. <input type="range">
 
 スライダー形式で数値を入力してもらう要素です。音量調整や、明るさ調整など、直感的に値を変更したい場合に適しています。
+
+#### ドロップダウンリストの仕組み
+
+ドロップダウンリストは、**<select>** と **<option>**の2つのタグで構成されます。
+
+<select>: ドロップダウンリスト全体を定義します。
+
+<option>: 選択肢を1つずつ定義します。value属性に、その選択肢の値を記述します。
+
+selectタグのvalue属性にuseStateで管理している状態を紐づけることで、ユーザーが選択した値をリアルタイムで取得できます。
+
+####　Enterで検索ボタンを押す方法
+
+**formタグで囲む**
+
+最も簡単な方法は、inputタグとbuttonタグを**<form>タグで囲むことです。HTMLの<form>タグは、Enterキーが押されたときに自動的に送信イベント（onSubmit）を発生させる仕組みを持っています。
+
+1. <input>と<button>を<form>で囲みます。
+
+2. <form>にonSubmitイベントハンドラを追加します。
+
+使用例
+```JavaScript
+<form onSubmit={handleSearch}>
+  <input type="text" value={query} onChange={handleWord} />
+  <button type="submit">検索</button>
+</form>
+```
+**onSubmitイベントの注意点**
+
+ブラウザは、formのonSubmitイベントが発生すると、デフォルトでページ全体を再読み込みしようとします。これを防ぐために、イベントオブジェクトの**e.preventDefault()**メソッドを呼び出す必要があります。
+
+### APIキーの管理方法(localhostで動かさない場合)
+
+React本体のアプリが直接データの取得を行うのではなく他のサーバーを仲介して行う
+
+実装例
+```Javascript
+// server.js (簡易例)
+const express = require('express');
+const app = express();
+const cors = require('cors'); // Reactアプリからのリクエストを許可する
+const fetch = require('node-fetch');
+
+app.use(cors());
+
+// ポート番号を3001に設定（Reactアプリと被らないように）
+const PORT = 3001; 
+const PIXABAY_API_KEY = "あなたのAPIキーをここに直接書くか、サーバー側の.envに保存"; 
+
+app.get('/search-images', async (req, res) => {
+    // Reactアプリから送られてきた検索クエリを取得
+    const query = req.query.q;
+
+    // PixabayのAPIにリクエストを送信
+    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${query}`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        res.json(data); // 取得したデータをReactアプリに返す
+    } catch (error) {
+        res.status(500).json({ message: "サーバーエラーが発生しました" });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`サーバーがポート ${PORT} で起動しました`);
+});
+```
+Reactアプリの修正
+```Javascript
+// ReactのhandleSearch関数内
+const url = `http://localhost:3001/search-images?q=${query}`;
+fetch(url).then(...).catch(...);
+```
+
+### useEffectの使い方
+
+useEffectでできること
+
+ボタンを押したときにだけAPIを呼び出すのではなく、ユーザーの入力や選択に応じて、**リアルタイム**に検索結果を更新できる
+
+useEffectの基本的な役割
+
+コンポーネントの状態が変わったら何かを実行するというもの
+
+useEffectの構文
+```Javascript
+useEffect(
+  () => {
+    // 実行したい処理
+  },
+  [依存配列] // 依存配列
+);
+```
+1. 第一引数: () => {} のように書く、実行したい処理を中に書いた関数です。
+
+2. 第二引数: [] のように書く、依存配列です。これがuseEffectを理解する上で最も重要なポイントです。
+
+第二引数が[query, imageType] の場合: queryかimageTypeのどちらかが変更されるたびに、useEffectの中の処理が実行されます。
+
+画像検索アプリでは、検索キーワードかドロップダウンの選択が変わるたびに再検索が走るのは、この仕組みのおかげです。
+
+[] の場合（空の配列）: コンポーネントが最初に描画されたときに一度だけ実行されます。もしAPIキーのチェックを初回描画時だけ行いたい場合などに使えます
