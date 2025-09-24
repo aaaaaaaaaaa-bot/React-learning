@@ -5,9 +5,26 @@ export default function App() {
   const [image, setImage] = useState([]);//画像データを入れる
   const [error, setError] = useState({ message: null, type: null });//エラーメッセージとエラー内容の一括管理に用いる
   const [loading, setLoading] = useState(false);//画像検索中の表記に用いる
+  const [type,setType] = useState("all");
 
   const handleWord = (e) => {//検索欄に文字が入力されるたびその内容を保持する
     setQuery(e.target.value)
+  }
+
+  const typePhoto = () => {
+    setType("photo");
+  }
+
+  const typeIllustration = () => {
+    setType("illustration")
+  }
+
+  const typeVector = () => {
+    setType("vector")
+  }
+
+  const typeAll = () => {
+    setType("all")
   }
 
   const handleSearch = () => { //ボタンが押された時の処理
@@ -22,7 +39,7 @@ export default function App() {
       setLoading(true);//画像の検索に入る
 
       const API_KEY = process.env.REACT_APP_API_KEY;
-      const url = `https://pixabay.com/api/?key=${API_KEY}&q=${query}`;
+      const url = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=${type}`;
 
       fetch(url)
         .then(response => {
@@ -50,6 +67,7 @@ export default function App() {
   return (
     <div>
       <h1>画像検索</h1>
+      <h2>現在の表示内容：{type}</h2>
       <input
         type="text"
         value={query}
@@ -58,13 +76,20 @@ export default function App() {
       />
       <button onClick={handleSearch}>検索</button>
 
+      <div> {/*検索結果の判別*/}
+        <button onClick={typePhoto}>写真</button>
+        <button onClick={typeIllustration}>図や絵</button>
+        <button onClick={typeVector}>ベクター</button>
+        <button onClick={typeAll}>全て</button>
+      </div>
+
       {loading ? (
         <p>画像データを読み込み中</p>
       ) : error.message ? (
         <p>{error.message}</p>
       ) : image.length > 0 ? (
         <>
-        <h2>{query}</h2> {/*検索欄の入力を表示*/}
+        <h3>{query}</h3> {/*検索欄の入力を表示*/}
         <ul>
           {image.map((hits) => (
             <li key={hits.id}>
