@@ -4,6 +4,7 @@ export default function App() {
     const [title,setTitle] = useState(''); //学習記録(タイトル)保持用
     const [content,setContent] = useState('');//学習記録(学習内容)保持用
     const [records,setRecords] = useState([]); //学習記録保存用
+    const [time,setTime] = useState(0);//時間記録用
 
     useEffect(
         () => {
@@ -53,7 +54,8 @@ export default function App() {
                     ...record,
                     entries: [...record.entries, {
                         content: content,
-                        date: new Date().toLocaleDateString()
+                        date: new Date().toLocaleDateString(),
+                        time: time,
                     }]
                 };
             }
@@ -67,6 +69,7 @@ export default function App() {
             entries: [{
                 content: content,
                 date: new Date().toLocaleDateString(), // 日付を記録
+                time: time,
                 //勉強時間も追加
             }],
             };
@@ -105,12 +108,16 @@ export default function App() {
             rows="10" //10行分
             cols="50" //横に50文字
             />
-            {/*} //勉強時間あとで追加したい
             <input
-            type = "range"
-            value = {}
+            type="range"
+            min="0" // 最小値
+            max="120" // 最大値 (例: 120分)
+            step="5" // 5分刻み
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
             />
-            */}
+            {/* ここに現在の時間を表示する */}
+            <p>現在: {time} 分</p>
 
             <button onClick = {saveRecord}>保存</button> {/*別のところに表示する予定 */}
 
@@ -121,10 +128,12 @@ export default function App() {
                         <li key={index}>
                             <label>{record.title}</label>
                             {/* entries配列をさらにmapでループする */}
+                            {/*record.entries &&という条件を追加することで、record.entriesがundefinedまたはnullの場合、mapは実行されずに処理が終了します */}
                             {record.entries && record.entries.map((entry, entryIndex) => (
                             <div key={entryIndex}>
                                 <p>日付: {entry.date}</p>
                                 <p>{entry.content}</p>
+                                <p>時間: {entry.time}分</p>
                             </div>
                             ))}
                         <button onClick={() => recordDelate(index)}>削除</button>{/*recordDelate(index)だけだとレンダリングされるたびに関数が実行されちゃう */}

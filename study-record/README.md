@@ -111,6 +111,7 @@ const parsedRecords = JSON.parse(storedRecords);
 // parsedRecords は JavaScriptの配列として使える
 ```
 
+
 ## CSSとは(余談)
 
 CSSは Cascading Style Sheets（カスケーディング・スタイル・シート）の略です。
