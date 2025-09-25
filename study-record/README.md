@@ -14,15 +14,15 @@
 
 #### メモ
 
-e.targetはイベントが発生したDOM要素（<input>要素など）を指します
+e.targetはイベントが発生したDOM要素（input要素など）を指します
 
-e.target.valueでDOM要素(<input>要素など)のvalueの値
+e.target.valueでDOM要素(input要素など)のvalueの値
 
 e.valueはない
 
-### <input>と<label>を縦に並べる方法
+### inputとlabelを縦に並べる方法
 
-<label>と<input>はデフォルトでインライン要素なので、横に並んでしまいます
+labelとinputはデフォルトでインライン要素なので、横に並んでしまいます
 
 CSS上で下記のように操作する
 ```CSS
@@ -33,7 +33,7 @@ label, input {
 
 ### textareaの大きさの調整(HTML)
 
-HTMLの<textarea>タグには、**rowsとcols**という属性があり、これらを使って初期の大きさを設定できます。
+HTMLのtextareaタグには、**rowsとcols**という属性があり、これらを使って初期の大きさを設定できます。
 
 rows: テキストエリアの表示行数を指定します。
 
@@ -46,7 +46,70 @@ cols: テキストエリアの**表示列数（文字数）**を指定します�
 
 ## オブジェクトとは
 
+### Props(プロップス)
 
+Reactのコンポーネントが互いにやり取りする際にpropsと呼ばれるオブジェクトを用いる
+
+親コンポーネントは子コンポーネントへ属性としてのデータを渡すと子コンポーネントはそのデータをpropsというオブジェクトとして受け取ります
+
+### State(状態)
+
+コンポーネント内でデータを保持し、その変更によってコンポーネントを再レンダリングするためのオブジェクトです
+
+#### オブジェクトへのデータの保存方法
+
+オブジェクトは「プロパティ名: 値」のペアでデータを格納します
+
+#### ※Stateの情報を直接変更してはいけない
+
+ReactのStateに保持されたオブジェクトは、直接変更してはいけません。これをミューテーションと呼びます(これはダメ)
+
+正しい更新方法は、新しいオブジェクトを作成することです。スプレッド構文（...）を使うと、元のオブジェクトのプロパティをコピーして、新しいオブジェクトを簡単に作れます
+```JavaScript
+// ❌ 悪い例（ミューテーション）
+const [person, setPerson] = useState({ name: '太郎', age: 25 });
+person.age = 26; // 直接変更
+setPerson(person); // Reactは変更を検知しない
+
+// ✅ 良い例（新しいオブジェクトを作成）
+setPerson({ ...person, age: 26 }); // スプレッド構文でコピーして更新
+```
+
+### localstorageとは
+
+localStorageは、ウェブブラウザにデータを保存する機能
+
+これまでuseStateでデータを扱ってきましたが、**useStateに保存されたデータは、ブラウザを閉じたりページを再読み込みしたりすると消えてしまいます。**
+
+localStorageは、ブラウザにデータを保存することで、この問題を解決します。
+
+localStorageには、**主に3つの基本的なメソッド**があります。
+
+localStorage.setItem(キー, 値): データを保存します。**値は必ず文字列でなければなりません。**
+```JavaScript
+localStorage.setItem('username', 'Alice')
+```
+のように使います。
+
+localStorage.getItem(キー): 保存したデータを取得します。
+```JavaScript
+const name = localStorage.getItem('username');
+```
+localStorage.removeItem(キー): 保存したデータを削除します。
+
+### JSON.stringify() と JSON.parse()
+
+localStorageは文字列しか扱えないため、JavaScriptの配列やオブジェクトを保存する際には、文字列に変換する必要があります。この変換に**JSON.stringify()**を使います。
+```JavaScript
+const records = [{ title: 'React' }];
+localStorage.setItem('study_records', JSON.stringify(records));
+```
+逆に、localStorageからデータを取り出して、JavaScriptの配列やオブジェクトに戻す際は、**JSON.parse()**を使います。
+```JavaScript
+const storedRecords = localStorage.getItem('study_records');
+const parsedRecords = JSON.parse(storedRecords);
+// parsedRecords は JavaScriptの配列として使える
+```
 
 ## CSSとは(余談)
 
