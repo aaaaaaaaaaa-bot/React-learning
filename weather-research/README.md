@@ -1,70 +1,29 @@
-# Getting Started with Create React App
+# 支出・収入トラッカー(家計簿)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**アプリの基本的な流れ**
 
-## Available Scripts
+データの入力: ユーザーが金額を入力し、「収入」または「支出」のどちらかを選択します。
 
-In the project directory, you can run:
+データの保存: 「記録」ボタンを押すと、そのデータ（金額、タイプなど）がrecordsという配列（State）に追加されます。
 
-### `npm start`
+自動計算と表示: recordsの状態が更新されるたびに、reduceメソッドが自動的に働き、以下の集計結果を計算して表示します。
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 実装内容
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. データの構造と入力フォーム
 
-### `npm test`
+まず、どんなデータを扱うかを決め、そのためのStateと入力フォームを用意します
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. reduceによる合計計算（核心部分）
 
-### `npm run build`
+これがこのアプリのメインの練習です。全ての記録（records）から「純利益」と「支出/収入の合計」を計算します。
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. useEffectによる自動計算と保存
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+データが変わるたびに、再計算とLocalStorageへの保存を自動で行いましょう。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### メモ
 
-### `npm run eject`
+#### <select>要素（ドロップダウンリスト）の基本的な使い方
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
