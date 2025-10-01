@@ -122,23 +122,48 @@ export default function App() {
             <button onClick = {saveRecord}>保存</button> {/*別のところに表示する予定 */}
 
             <h2>学習記録</h2>
+            
             <ul>{/*タイトルと学習内容が空欄の場合は記録できないようにする*/}
                 {records && records.length > 0 ? (//recordsがあり,何か書かれている
-                    records.map((record,index) => (
-                        <li key={index}>
-                            <label>{record.title}</label>
-                            {/* entries配列をさらにmapでループする */}
-                            {/*record.entries &&という条件を追加することで、record.entriesがundefinedまたはnullの場合、mapは実行されずに処理が終了します */}
-                            {record.entries && record.entries.map((entry, entryIndex) => (
-                            <div key={entryIndex}>
-                                <p>日付: {entry.date}</p>
-                                <p>{entry.content}</p>
-                                <p>時間: {entry.time}分</p>
-                            </div>
-                            ))}
-                        <button onClick={() => recordDelate(index)}>削除</button>{/*recordDelate(index)だけだとレンダリングされるたびに関数が実行されちゃう */}
-                        </li>
-                    ))
+                    records.map((record,index) => {
+                        const addTotalNumber = record.entries.reduce((sum ,entry) => {
+                            return sum += Number(entry.time);
+                        },0);//初期値が０
+
+                        const totalStudyTime = Math.floor(Number(addTotalNumber)/60);
+                        const totalStudyMinute = addTotalNumber % 60;
+                        return (
+                            <li key={index}>
+                                <label>{record.title}</label>
+                                <p>合計学習時間：{totalStudyTime}時間{totalStudyMinute}分</p>
+                                {
+                                Object.entries(
+                                    record.entries.reduce((acc,entry) => {
+                                        // acc[entry.date]がなければ新しい配列を作成
+                                        if (!acc[entry.date]) {
+                                            acc[entry.date] = [];
+                                        }
+                                        // その日の記録を配列に追加
+                                        acc[entry.date].push(entry);
+                                        return acc;
+                                    },{})
+                                    ).map(([date,entries]) => (
+                                            <div key={date}>
+                                                <h3>日付: {date}</h3> {/* 日付はh3などにして目立たせると良い */}
+                                                {/* 3. その日の記録の配列 (entries) をループして表示 */}
+                                                    {entries.map((entry, entryIndex) => (
+                                                            <div key={entryIndex}>
+                                                                <p>内容: {entry.content}</p>
+                                                                <p>時間: {Math.floor(Number(entry.time) / 60)}時間{Number(entry.time) % 60}分</p>
+                                                            </div>
+                                                    ))}
+                                            </div>
+                                    ))
+                                }
+                            <button onClick={() => recordDelate(index)}>削除</button>{/*recordDelate(index)だけだとレンダリングされるたびに関数が実行されちゃう */}
+                            </li>
+                        )
+                    })
                 ):null}
             </ul>
         </div>
