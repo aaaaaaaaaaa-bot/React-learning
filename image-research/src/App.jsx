@@ -31,6 +31,9 @@ export default function App() {
     // ページが再読み込みされるのを防ぐ
     e.preventDefault();
 
+    // 検索を始める前に、以前のエラーをクリアする
+    setError({ message: null, type: null }); 
+
     if (query.trim() === '') { //queryが空なら何もしない
       setError({
         message: "キーワードが入力されていません",
