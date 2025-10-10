@@ -68,6 +68,91 @@ PHP, Python, Rubyなどのサーバーサイドのプログラミング言語は
 
 name属性がない場合、ユーザーが選択を行っても、その選択肢のデータはフォームと一緒にサーバーへ送信されません。
 
+#### 関数の解説
+```JavaScript
+const handleChange = (e) => {
+    const { id, value } = e.target;
+
+    setFormData(prevFormData =>
+        prevFormData.map(item =>
+            item.id === id
+                ? { ...item, text: value }
+                : item
+        )
+    );
+  };  
+```
+1. イベントオブジェクトからの値の取得
+```JavaScript
+const { id, value } = e.target;
+```
+**e.target**: これは、イベント（入力値の変更）が発生したDOM要素（この場合はinputタグ）を指します。
+
+**分割代入 ({ id, value })**: e.targetオブジェクトから、以下の2つのプロパティを抽出しています。
+
+id: 変更されたinputタグに設定されている**id属性の値**（例: 'amount'や'content'など）。これで、formData配列のどの項目を更新すべきかを識別します。
+
+value: ユーザーが入力した新しい値（inputタグの現在の値）。
+
+2. setFormData と ステートの更新
+```JavaScript
+setFormData(prevFormData => /* ... */ );
+```
+**関数形式のステート更新**: setFormDataに直接新しい配列を渡す代わりに、関数を渡しています。
+
+**prevFormDataは自分で定義しなくていいのか?**
+
+->しなくて良い
+
+prevFormDataは、Reactの**useStateのセッター関数に「関数」を渡したとき**に、Reactが自動的に提供してくれるものです。
+
+
+1.setFormData(prevFormData => { ... }) の形式でセッター関数を呼び出します。
+
+2.Reactは、この関数を実行する際に、現在の最新のformDataの値を自動的に取得し、その値を引数としてprevFormDataに代入して渡します。
+
+3.このprevFormDataは、関数内で現在の状態を参照するための一時的な変数名として機能します。
+
+3. 配列のイテレーションと更新
+```JavaScript
+prevFormData.map(item => /* ... */ )
+```
+**mapの使用**: mapは、元の配列（prevFormData）の各要素を処理し、新しい配列を返します。これにより、元の状態（prevFormData）を直接変更しない（不変性を守る）というReactのルールを守れます。
+
+**itemは何か**
+
+->itemは、JavaScriptの配列のmap()メソッドを使うときに、配列の各要素を指すために、開発者が自由に名付けた引数です
+
+4. 条件分岐とオブジェクトの更新
+```JavaScript
+item.id === id
+    ? { ...item, text: value } // A: 該当する項目を新しい値で更新
+    : item // B: それ以外の項目はそのまま
+```
+map内の各要素（item）に対して、三項演算子（? :）を使って処理を分岐させています。
+
+**item.id === id:**
+
+現在処理している配列の要素（item）のidが、変更が発生したinputのidと一致するかをチェックします。
+
+**A: 一致する場合 (? { ...item, text: value }):**
+
+{ ...item }: スプレッド構文を使って、元のitemオブジェクトのすべてのプロパティをコピーします。
+
+text: value: コピーした後に、textプロパティだけを新しいvalueで上書きします。
+
+これにより、idや他のプロパティは変更せず、textだけが更新された新しいオブジェクトが作成されます。
+
+**B: 一致しない場合 (: item):**
+
+何も変更せず、元のitemオブジェクトをそのまま新しい配列に返します。
+
+#### value={getRecordValue(formData, 'type')} の意味
+
+これは、以下のことをReactに伝えています。
+
+「この select の現在の選択肢は、formData配列の中からid='type'の要素を探して、そのtextの値（incomeまたはexpenditure）と同じものだよ」
+
 ### なんか
 ```JavaScript
 import React, { useState, useEffect } from 'react'; // EeactをReactに修正
