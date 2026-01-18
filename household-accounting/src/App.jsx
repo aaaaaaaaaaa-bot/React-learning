@@ -76,6 +76,11 @@ export default function App() {
     );
   };
 
+  //記録の削除用の関数
+  const deleteRecord = () => {
+
+  }
+
 
   return (
     <ul>
@@ -114,6 +119,7 @@ export default function App() {
           <p>金額:{getRecordValue(record, "amount")}</p>
           <p>用途:{getRecordValue(record, "content")}</p>
           <p>{getRecordValue(record, "type")}</p>
+          <button onClick = {(e) => deleteRecord(e)}>削除</button>
         </li>
       ))}
     </ul>

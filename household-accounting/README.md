@@ -264,7 +264,7 @@ export default function App() {
             onClick={handleSaveData}
             className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition duration-200 shadow-md active:shadow-none active:translate-y-0.5 disabled:opacity-50"
           >
-            保存
+          保存
           </button>
         </div>
         
